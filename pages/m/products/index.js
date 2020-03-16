@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {useState} from 'react'
+import {useRouter} from 'next/router'
 import { Button } from 'antd-mobile'
 import style from './style.less'
 
@@ -13,12 +14,19 @@ function Tips() {
 }
 
 function Cell(props) {
+  const router = useRouter()
   const [isApply, setApply] = useState(false);
 
   const onApply = async () => {
     if (isApply) return
     setApply(true)
-    const {data: {code, data, msg}} = await axios.post('/api/product/m/apply.do', {productId: props.productId})
+    const {data: {code, data, msg}} = await axios.post(
+      '/api/product/m/apply.do',
+      {
+        productId: props.productId,
+        ...router.query
+      }
+    )
     setApply(false)
     if (code === 0) {
       if (data.type === 'url') {
